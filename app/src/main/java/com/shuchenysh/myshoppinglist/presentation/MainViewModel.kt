@@ -21,6 +21,7 @@ class MainViewModel : ViewModel() {
     val shopList: LiveData<List<ShopItem>>
         get() = _shopList
 
+
     fun getShopList() {
         _shopList.value = getShopListUseCase.getShopList()
     }
