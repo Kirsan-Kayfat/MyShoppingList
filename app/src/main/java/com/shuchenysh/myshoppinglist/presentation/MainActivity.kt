@@ -28,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
         }
+        binding.buttonAddShopItem.setOnClickListener{
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -38,10 +42,10 @@ class MainActivity : AppCompatActivity() {
         setupSwipeListener(rvShopList)
     }
 
-
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
-
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 
@@ -70,5 +74,4 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
-
 }
