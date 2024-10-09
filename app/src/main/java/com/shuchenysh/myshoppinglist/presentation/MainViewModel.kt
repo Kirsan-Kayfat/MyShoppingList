@@ -1,40 +1,30 @@
 package com.shuchenysh.myshoppinglist.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import com.shuchenysh.myshoppinglist.data.ShopListRepositoryImpl
+import com.shuchenysh.myshoppinglist.domain.RemoveShopItemUseCase
 import com.shuchenysh.myshoppinglist.domain.EditShopItemUseCase
 import com.shuchenysh.myshoppinglist.domain.GetShopListUseCase
-import com.shuchenysh.myshoppinglist.domain.RemoveShopItemUseCase
 import com.shuchenysh.myshoppinglist.domain.ShopItem
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = ShopListRepositoryImpl // исправить с применением DI
+    private val repository = ShopListRepositoryImpl(application)
 
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
     private val getShopListUseCase = GetShopListUseCase(repository)
-    private val removeShopItemUseCase = RemoveShopItemUseCase(repository)
+    private val deleteShopItemUseCase = RemoveShopItemUseCase(repository)
+    private val editShopItemUseCase = EditShopItemUseCase(repository)
 
-    private val _shopList = MutableLiveData<List<ShopItem>>()
-    val shopList: LiveData<List<ShopItem>>
-        get() = _shopList
-
-
-    fun getShopList() {
-        _shopList.value = getShopListUseCase.getShopList()
-    }
+    val shopList = getShopListUseCase.getShopList()
 
     fun removeShopItem(shopItem: ShopItem) {
-        removeShopItemUseCase.removeShopItem(shopItem)
-        getShopList()
+        deleteShopItemUseCase.removeShopItem(shopItem)
     }
 
     fun changeEnableState(shopItem: ShopItem) {
         val newItem = shopItem.copy(isEnabled = !shopItem.isEnabled)
         editShopItemUseCase.editShopItem(newItem)
-        getShopList()
     }
-
 }

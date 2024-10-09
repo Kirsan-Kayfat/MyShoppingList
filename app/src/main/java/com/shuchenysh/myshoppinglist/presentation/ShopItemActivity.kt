@@ -8,29 +8,29 @@ import com.shuchenysh.myshoppinglist.R
 import com.shuchenysh.myshoppinglist.databinding.ActivityShopItemBinding
 import com.shuchenysh.myshoppinglist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
-
-    private val binding: ActivityShopItemBinding by lazy {
-        ActivityShopItemBinding.inflate(layoutInflater)
-    }
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_shop_item)
         parseIntent()
         if (savedInstanceState == null) {
             launchRightMode()
         }
     }
 
+    override fun onEditingFinished() {
+        finish()
+    }
+
     private fun launchRightMode() {
         val fragment = when (screenMode) {
-            MODE_ADD  -> ShopItemFragment.newInstanceAddMode()
-            MODE_EDIT -> ShopItemFragment.newInstanceEditModeMode(shopItemId)
-            else      -> throw RuntimeException("Unknown screen mode: $screenMode")
+            MODE_EDIT -> ShopItemFragment.newInstanceEditItem(shopItemId)
+            MODE_ADD  -> ShopItemFragment.newInstanceAddItem()
+            else      -> throw RuntimeException("Unknown screen mode $screenMode")
         }
         supportFragmentManager.beginTransaction()
             .replace(R.id.shop_item_container, fragment)
@@ -43,7 +43,7 @@ class ShopItemActivity : AppCompatActivity() {
         }
         val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
         if (mode != MODE_EDIT && mode != MODE_ADD) {
-            throw RuntimeException("Unknown screen mode: $mode")
+            throw RuntimeException("Unknown screen mode $mode")
         }
         screenMode = mode
         if (screenMode == MODE_EDIT) {

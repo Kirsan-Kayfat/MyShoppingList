@@ -1,13 +1,13 @@
 package com.shuchenysh.myshoppinglist.domain
 
 data class ShopItem(
-    val id: Int,
+    var id: Int = UNDEFINED_ID,
     val name: String,
     val count: Int,
     val isEnabled: Boolean
 ) {
 
     companion object {
-        const val UNDEFINED_ID = -1
+        const val UNDEFINED_ID = 0
     }
 }
